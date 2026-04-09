@@ -31,11 +31,14 @@ public class TcpHealthProbe : IHealthProbe
 
         try
         {
+            if (string.IsNullOrEmpty(endpoint.Host))
+                throw new InvalidOperationException($"Host is not configured for TCP probe '{endpoint.Name}'");
+
             _logger.LogInformation("Probing TCP endpoint {EndpointName} at {Host}:{Port}",
                 endpoint.Name, endpoint.Host, endpoint.Port);
 
             using var tcpClient = new TcpClient();
-            await tcpClient.ConnectAsync(endpoint.Host!, endpoint.Port, timeoutCts.Token);
+            await tcpClient.ConnectAsync(endpoint.Host, endpoint.Port, timeoutCts.Token);
 
             stopwatch.Stop();
             result.Duration = stopwatch.Elapsed;

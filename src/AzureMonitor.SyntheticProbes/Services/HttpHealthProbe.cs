@@ -32,6 +32,9 @@ public class HttpHealthProbe : IHealthProbe
 
         try
         {
+            if (string.IsNullOrEmpty(endpoint.Url))
+                throw new InvalidOperationException($"Url is not configured for HTTP probe '{endpoint.Name}'");
+
             var client = _httpClientFactory.CreateClient("HealthProbe");
 
             using var request = new HttpRequestMessage(HttpMethod.Get, endpoint.Url);

@@ -81,8 +81,7 @@ public class ProbeOrchestratorTests
         httpProbe.Setup(p => p.ExecuteAsync(It.IsAny<ProbeEndpoint>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(() =>
             {
-                callCount++;
-                if (callCount == 1)
+                if (Interlocked.Increment(ref callCount) == 1)
                     throw new Exception("Simulated failure");
                 return new ProbeResult { Success = true };
             });
